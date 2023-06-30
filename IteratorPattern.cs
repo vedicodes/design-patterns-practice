@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ConsolePractice;
@@ -100,21 +101,86 @@ public class DinnerMenu : IMenu
     }
 }
 
+public class DaysOfWeek : IEnumerable
+{
+    private readonly string[] daysOfWeek;
+
+    public DaysOfWeek()
+    {
+        daysOfWeek = new string[]
+        {
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+        };
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        return new DaysOfWeekIterator(daysOfWeek);
+    }
+}
+
+public class DaysOfWeekIterator : IEnumerator
+{
+    private readonly string[] daysOfWeek;
+    private int position;
+
+    public DaysOfWeekIterator(string[] daysOfWeek)
+    {
+        this.daysOfWeek = daysOfWeek;
+        position = -1;
+    }
+
+    public object Current
+    {
+        get
+        {
+            try
+            {
+                return daysOfWeek[position];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw new InvalidOperationException();
+            }
+        }
+    }
+
+    public void Reset()
+    {
+        position = -1;
+    }
+
+    public bool MoveNext()
+    {
+        position++;
+        return (position < daysOfWeek.Length);
+    }
+}
+
 public class IteratorPattern
 {
     public static void Run()
     {
-        foreach (var item in GetNumbers())
+        var daysOfWeek = new DaysOfWeek();
+
+        foreach (var item in daysOfWeek)
         {
             Console.WriteLine("{0}", item);
         }
     }
-
-    public static IEnumerable<int> GetNumbers()
+    
+    public static IEnumerable<int> GetNumbers(int startPosition, int endPosition)
     {
-        yield return 3;
-        yield return 2;
-        yield return 1;
+        for (var number = startPosition; number <= endPosition; number++)
+        {
+            if (number % 2 == 0) yield return number;
+        }
     }
 
     private static void ShowMenus()
