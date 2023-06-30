@@ -1,4 +1,7 @@
-﻿namespace ConsolePractice;
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace ConsolePractice;
 
 public interface IMenu
 {
@@ -100,6 +103,21 @@ public class DinnerMenu : IMenu
 public class IteratorPattern
 {
     public static void Run()
+    {
+        foreach (var item in GetNumbers())
+        {
+            Console.WriteLine("{0}", item);
+        }
+    }
+
+    public static IEnumerable<int> GetNumbers()
+    {
+        yield return 3;
+        yield return 2;
+        yield return 1;
+    }
+
+    private static void ShowMenus()
     {
         IMenu menu = new PancakeHouseMenu();
         PrintMenu(menu.CreateIterator());
