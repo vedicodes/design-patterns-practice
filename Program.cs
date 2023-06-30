@@ -4,6 +4,6 @@ class Program
 {
     static void Main()
     {
-        DecoratorPattern.Run();
+        IteratorPattern.Run();
     }
 }
