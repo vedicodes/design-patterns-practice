@@ -101,7 +101,7 @@ public class DinnerMenu : IMenu
     }
 }
 
-public class DaysOfWeek : IEnumerable
+public class DaysOfWeek : IEnumerable<string>
 {
     private readonly string[] daysOfWeek;
 
@@ -119,24 +119,22 @@ public class DaysOfWeek : IEnumerable
         };
     }
 
+    IEnumerator<string> IEnumerable<string>.GetEnumerator()
+    {
+        return (IEnumerator<string>)GetEnumerator();
+    }
+
     public IEnumerator GetEnumerator()
     {
         return new DaysOfWeekIterator(daysOfWeek);
     }
 }
 
-public class DaysOfWeekIterator : IEnumerator
+public class DaysOfWeekIterator : IEnumerator<string>
 {
     private readonly string[] daysOfWeek;
     private int position;
-
-    public DaysOfWeekIterator(string[] daysOfWeek)
-    {
-        this.daysOfWeek = daysOfWeek;
-        position = -1;
-    }
-
-    public object Current
+    private string Current
     {
         get
         {
@@ -150,16 +148,62 @@ public class DaysOfWeekIterator : IEnumerator
             }
         }
     }
+    private bool disposed = false;
 
-    public void Reset()
+    public DaysOfWeekIterator(string[] daysOfWeek)
+    {
+        this.daysOfWeek = daysOfWeek;
+        position = -1;
+    }
+
+    string IEnumerator<string>.Current => Current;
+
+    object IEnumerator.Current => Current;
+
+    void Reset()
     {
         position = -1;
     }
 
-    public bool MoveNext()
+    bool MoveNext()
     {
         position++;
         return (position < daysOfWeek.Length);
+    }
+
+    bool IEnumerator.MoveNext()
+    {
+        return MoveNext();
+    }
+
+    void IEnumerator.Reset()
+    {
+        Reset();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        // Use SupressFinalize in case a subclass 
+        // of this type implements a finalizer.
+        GC.SuppressFinalize(this);
+    }
+
+    // Gets called by the below dispose method
+    // resource cleaning happens here
+    protected virtual void Dispose(bool disposing)
+    {
+        // check if already disposed
+        if (!disposed)
+        {
+            if (disposing)
+            {
+                // free managed objects here
+                position = -1;
+            }
+            disposed = true;
+        }
     }
 }
 
